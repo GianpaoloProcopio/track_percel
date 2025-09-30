@@ -154,6 +154,12 @@ nav{
                 transform: scale(1.03);
             }
 
+            button:disabled{
+                background-color: grey;
+                cursor: not-allowed;
+                transform: none;
+            }
+
             .annulla{
                 background-color: transparent;
                 color: var(--trout-caviar);
@@ -191,6 +197,35 @@ nav{
                     padding: 3px;
                 }
             }
+        }
+
+        .autocomplete-container {
+            position: relative; /* contesto per posizionamento assoluto dei suggerimenti */
+        }
+
+        .suggerimenti-list {
+            position: absolute;
+            top: 100%; /* subito sotto l'input */
+            left: 0;
+            right: 0;
+            max-height: 150px; /* altezza massima */
+            overflow-y: auto; /* scroll verticale */
+            background: var(--background-color-3);
+            border: none;
+            z-index: 1000; /* sopra gli altri elementi */
+            list-style: none;
+            margin: 0;
+            padding: 0;
+            border-radius: 8px;
+        }
+
+        .suggerimenti-list li {
+            padding: 8px 10px;
+            cursor: pointer;
+        }
+
+        .suggerimenti-list li:hover {
+            background-color: var(--background-color-2);
         }
     }
     
@@ -244,6 +279,7 @@ nav{
 }
 
 .location{
+    position: relative;
     display: flex;
     flex-direction: column;
     align-items: center;
@@ -285,6 +321,27 @@ nav{
                     font-size: 15px;
                 }
             }
+        }
+    }
+
+
+    .button{
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        margin: 50px 0;
+        button{
+            width: 250px;
+            height: 65px;
+            border: none;
+            border-radius: 8px;
+            font-size: 18px;
+            font-weight: 500;
+            cursor: pointer;
+            box-shadow: 6px 6px 12px 5px rgba(0, 0, 0, 0.4);
+            background-color: var(--trout-caviar);
+            color: var(--text-color);
+            text-align: center;
         }
     }
 }
@@ -512,15 +569,6 @@ nav{
     }
 }
 
-@media (max-width: 1024px) {
-    .home{
-        .spedizioni{
-            min-width: 650px;
-            max-height: 450px;
-        }
-    }
-}
-
 .user{
     position: absolute;
     position: absolute;
@@ -541,7 +589,17 @@ nav{
     }
 }
 
-@media ( max-width: 480px) {
+@media (max-width: 1024px) {
+    .home{
+        .spedizioni{
+            min-width: 650px;
+            max-height: 450px;
+        }
+    }
+}
+
+
+@media (max-width: 690px) {
 
     body{
         width: calc(100% - 14px);
@@ -575,9 +633,36 @@ nav{
         }
     }
 
-    .spedizione{
-        .right{
-            right: 20px;
+    .login-page{
+        width: 100%;
+        height: auto;
+
+        .container-login{
+            position:relative;
+            margin-top: 100px;
+            background-color: transparent;
+            width: 100%;
+            height: auto;
+            display: flex;
+            flex-direction: column-reverse;
+            background-color: white;
+
+            .container-form{
+                width: 100%;
+                position: relative;
+                transform: translate(0);
+                opacity: 1;
+                padding: 35px 0;
+            }
+
+            .registrati{
+                margin-top: 50px;
+            }
+
+
+            .container-toggle{
+                display: none;
+            }
         }
     }
 }

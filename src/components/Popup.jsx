@@ -1,15 +1,15 @@
 import { useState} from "react";
 import { firestore, auth} from '../firebase/firebase';
 import { collection, addDoc, serverTimestamp } from 'firebase/firestore';
+import {corrieri} from './corrieri';
 
-export default function Popup({setIsAddSpedizione}){
+export default function Popup({setIsAddSpedizione, n, c, d}){
 
-    // eslint-disable-next-line no-unused-vars
     const [numero, setNumero] = useState("");
-    // eslint-disable-next-line no-unused-vars
     const [corriere, setCorriere] = useState("");
-    // eslint-disable-next-line no-unused-vars
+    const [corriereValido, setCorriereValido] = useState(false);
     const [descrizione, setDescrizione] = useState("");
+    const [suggerimenti, setSuggerimenti] = useState([]);
 
     function handleClosePopup() {
         document.getElementById("pellicola-popup").classList.remove("active");
@@ -50,73 +50,57 @@ export default function Popup({setIsAddSpedizione}){
 
             <div className="scelte">
                 <button className="annulla" onClick={() => {handleClosePopup()}} >Annulla</button>
-                <button className="fatto" onClick={() => addSpedizione()}>Fatto</button>
+                <button className="fatto" onClick={() => addSpedizione()} disabled={numero === "" || corriere === "" || !corriereValido}>Fatto</button>
             </div>
 
-            <form>
+            <form >
 
                 <div className="input">
                     <label htmlFor="numero">Numero</label>
-                    <input type="text" name="numero" id="numero" placeholder="Richiesto" onChange={(e) => setNumero(e.target.value)} required/>
+                    <input type="text" name="numero" id="numero" placeholder="Richiesto" value={c} onChange={(e) => setNumero(e.target.value)} required/>
                 </div>
 
-                <div className="input">
-
+                <div className="input autocomplete-container">
                     <label htmlFor="corriere">Corriere</label>
-                    <select name="corriere" id="corriere" value={corriere} onChange={(e) => setCorriere(e.target.value)} required>
-                        <option value="" disabled>--/--</option>
-                        <option value="dhl">DHL Express</option>
-                        <option value="fedex">FedEx</option>
-                        <option value="ups">UPS</option>
-                        <option value="tnt">TNT Express</option>
-                        <option value="usps">USPS</option>
-                        <option value="royalmail">Royal Mail</option>
-                        <option value="chinapost">China Post</option>
-                        <option value="japanpost">Japan Post</option>
-                        <option value="canadapost">Canada Post</option>
-                        <option value="laposte">La Poste</option>
-                        <option value="australiapost">Australia Post</option>
-                        <option value="correos">Correos</option>
-                        <option value="postnl">PostNL</option>
-                        <option value="swisspost">Swiss Post</option>
-                        <option value="sagawa">Sagawa Express</option>
-                        <option value="yamato">Yamato Transport</option>
-                        <option value="aramex">Aramex</option>
-                        <option value="gatikwe">Gati-KWE</option>
-                        <option value="singpost">SingPost</option>
-                        <option value="dhlglobal">DHL Global Forwarding</option>
-                        <option value="dhlsc">DHL Supply Chain</option>
-                        <option value="zto">ZTO Express</option>
-                        <option value="yto">YTO Express</option>
-                        <option value="sfexpress">SF Express</option>
-                        <option value="jdlogistics">JD Logistics</option>
-                        <option value="kuehne">Kuehne + Nagel</option>
-                        <option value="ceva">CEVA Logistics</option>
-                        <option value="dbschenker">DB Schenker</option>
-                        <option value="expeditors">Expeditors</option>
-                        <option value="rhenus">Rhenus Logistics</option>
-                        <option value="xpologistics">XPO Logistics</option>
-                        <option value="panalpina">Panalpina</option>
-                        <option value="geodis">Geodis</option>
-                        <option value="hanjin">Hanjin Shipping</option>
-                        <option value="evergreen">Evergreen Marine</option>
-                        <option value="msc">MSC (Mediterranean Shipping Company)</option>
-                        <option value="maersk">Maersk Line</option>
-                        <option value="cmacgm">CMA CGM</option>
-                        <option value="hapaglloyd">Hapag-Lloyd</option>
-                        <option value="yangming">Yang Ming Marine Transport Corporation</option>
-                        <option value="hyundai">Hyundai Merchant Marine</option>
-                        <option value="cosco">Cosco Shipping</option>
-                        <option value="porsche">Porsche Logistics</option>
-                        <option value="cargill">Cargill</option>
-                        <option value="hellmann">Hellmann Worldwide Logistics</option>
-                        <option value="bollore">Bolloré Logistics</option>
-                        <option value="kwe">Kintetsu World Express</option>
-                        <option value="tollgroup">Toll Group</option>
-                        <option value="a1express">A1 Express</option>
-                        <option value="brt">BRT (Bartolini)</option>
-                    </select>
-                    
+                    <input
+                        type="text"
+                        name="corriere"
+                        id="corriere"
+                        placeholder="Inizia a digitare..."
+                        value={corriere}
+                        onChange={(e) => {
+                            const value = e.target.value;
+                            setCorriere(value);
+                            setCorriereValido(false);
+
+                            // Filtra suggerimenti e limita a 10
+                            if (value.length > 0) {
+                                const filtrati = corrieri
+                                    .filter(c => c.toLowerCase().includes(value.toLowerCase()))
+                                    .slice(0, 10); // solo i primi 10
+                                setSuggerimenti(filtrati);
+                            } else {
+                                setSuggerimenti([]);
+                            }
+                        }}
+                        autoComplete="off"
+                    />
+                    {suggerimenti.length > 0 && (
+                        <ul className="suggerimenti-list">
+                            {suggerimenti.map((s, index) => (
+                                <li
+                                    key={index}
+                                    onClick={() => {
+                                        setCorriere(s);
+                                        setSuggerimenti([]);
+                                        setCorriereValido(true);
+                                    }}
+                                >
+                                    {s}
+                                </li>
+                            ))}
+                        </ul>
+                    )}
                 </div>
 
                 <div className="input">
